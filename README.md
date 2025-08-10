@@ -20,6 +20,6 @@ Este projeto, **"Sistema de Gestão de Controle de Bens"**, tem como objetivo ge
 ## 📚 Documentação Adicional
 Para mais detalhes sobre o projeto, incluindo diagramas UML, requisitos detalhados e a lógica de cálculo de depreciação, acesse os links abaixo:
 
-- **Gerência do Projeto (Notion):** [Organização no Notion](https://www.notion.so/Sobre-Sistema-de-Gest-o-de-Controle-de-Bens-2d93235bfed5411784ce2ff21f6f637d)  
+- **Gerência do Projeto (Notion):** [Organização no Notion](https://chatter-thrush-8b0.notion.site/fae1da18e871478fb4a773e01696c976?v=179960041f474f40804b261930177c3c) 
 - **Documento de Projeto de Software:** [Documentação Completa](https://docs.google.com/document/d/1qBYit5A2wh77ZJw0JyxapzRW4YwG39rk7C5Q4jIHYCI/edit?tab=t.0)  
 
