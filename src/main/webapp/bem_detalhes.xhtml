@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Detalhes do Bem</title>
+    <h:outputStylesheet library="primefaces" name="primeflex/primeflex.css"/>
+</h:head>
+
+<h:body>
+    <p:panel header="Detalhes do Bem" style="margin: 20px; max-width: 600px;">
+        <h:panelGrid columns="2" cellpadding="5">
+            <h:outputLabel value="ID:"/>
+            <h:outputText value="#{bemBean.bemSelecionado.id}"/>
+
+            <h:outputLabel value="Nome:"/>
+            <h:outputText value="#{bemBean.bemSelecionado.nome}"/>
+
+            <h:outputLabel value="Tipo de Bem:"/>
+            <h:outputText value="#{bemBean.bemSelecionado.tipoBem.nome}"/>
+
+            <h:outputLabel value="Preço de Compra:"/>
+            <h:outputText value="#{bemBean.bemSelecionado.precoCompra}">
+                <f:convertNumber type="currency" currencySymbol="R$"/>
+            </h:outputText>
+
+            <h:outputLabel value="Data de Compra:"/>
+            <h:outputText value="#{bemBean.bemSelecionado.dataCompraAsDate}">
+                <f:convertDateTime pattern="dd/MM/yyyy"/>
+            </h:outputText>
+
+            <h:outputLabel value="Vida Estimada (anos):"/>
+            <h:outputText value="#{bemBean.bemSelecionado.vidaEstimadaAnos}"/>
+
+            <h:outputLabel value="Valor Residual:"/>
+            <h:outputText value="#{bemBean.bemSelecionado.valorResidual}">
+                <f:convertNumber type="currency" currencySymbol="R$"/>
+            </h:outputText>
+
+            <h:outputLabel value="Depreciação Anual:"/>
+            <h:outputText value="#{bemBean.bemSelecionado.calcularDepreciacaoAnual()}">
+                <f:convertNumber type="currency" currencySymbol="R$"/>
+            </h:outputText>
+        </h:panelGrid>
+
+  <p:button value="Voltar" icon="pi pi-arrow-left" outcome="bens?faces-redirect=true" style="margin-top: 10px;" />
+
+
+    </p:panel>
+</h:body>
+</html>

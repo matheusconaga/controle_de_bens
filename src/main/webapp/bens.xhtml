@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-br"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:of="http://omnifaces.org/ui">
+
+<h:head>
+    <title>Gerenciar Bens</title>
+    <h:outputStylesheet library="primefaces" name="primeflex/primeflex.css"/>
+</h:head>
+
+<h:body>
+    <p:growl id="growl" showDetail="true" sticky="false" life="5000" />
+
+    <p:panel header="Gerenciar Bens" style="margin: 20px;">
+        <p:button value="Gerenciar Tipos de Bem" icon="pi pi-list"
+          styleClass="ui-button-secondary"
+          outcome="tipos_bem"
+          style="margin-bottom: 15px;" />
+
+        <h:form id="formAdicionar">
+            <p:panelGrid columns="3" style="width: 100%;">
+                <f:facet name="header">
+                    <h:outputText value="Adicionar Novo Bem" rendered="#{bemBean.bemAtual.id == null}"/>
+                    <h:outputText value="Editar Bem" rendered="#{bemBean.bemAtual.id != null}"/>
+                </f:facet>
+
+                <p:outputLabel for="nome" value="Nome:"/>
+                <p:inputText id="nome" value="#{bemBean.bemAtual.nome}" required="true" label="Nome">
+                    <p:ajax event="blur" process="@this" update="growl nomeMessage"/>
+                </p:inputText>
+                <p:message id="nomeMessage" for="nome" display="icon"/>
+
+                <p:outputLabel for="tipoBem" value="Tipo de Bem:"/>
+               <p:selectOneMenu id="tipoBem" value="#{bemBean.bemAtual.tipoBem}" 
+                 converter="omnifaces.SelectItemsConverter" 
+                 required="true" label="Tipo de Bem">
+    <f:selectItem itemLabel="Selecione um Tipo" itemValue="#{null}"/>
+    <f:selectItems value="#{bemBean.tiposDeBem}" var="tipo"
+                   itemLabel="#{tipo.nome} (VR: #{tipo.aplicavel ? 'Sim' : 'Não'})" 
+                   itemValue="#{tipo}"/>
+    <p:ajax event="change" listener="#{bemBean.handleTipoBemChange}" 
+            process="@this" update="valorResidualGroup growl" />
+</p:selectOneMenu>
+
+                <p:message id="tipoBemMessage" for="tipoBem" display="icon"/>
+
+                <p:outputLabel for="precoCompra" value="Preço de Compra:"/>
+                <p:inputNumber id="precoCompra" value="#{bemBean.bemAtual.precoCompra}"
+                               required="true" label="Preço de Compra"
+                               decimalSeparator="," thousandSeparator="."
+                               symbol="R$ " symbolPosition="p">
+                    <p:ajax event="blur" process="@this" update="growl precoCompraMessage"/>
+                </p:inputNumber>
+                <p:message id="precoCompraMessage" for="precoCompra" display="icon"/>
+
+                <p:outputLabel for="dataCompra" value="Data da Compra:"/>
+                <p:calendar id="dataCompra" value="#{bemBean.bemAtual.dataCompra}" 
+                            pattern="dd/MM/yyyy"
+                            mask="false"
+                            required="true" label="Data da Compra"
+                            locale="pt_BR" navigator="true" showButtonPanel="true"/>
+                <p:message id="dataCompraMessage" for="dataCompra" display="icon"/>
+
+                <p:outputLabel for="vidaEstimada" value="Vida Útil (Anos):"/>
+                <p:inputNumber id="vidaEstimada" value="#{bemBean.bemAtual.vidaEstimadaAnos}" 
+                               decimalPlaces="0" required="true" label="Vida Útil">
+                    <p:ajax event="blur" process="@this" update="growl vidaEstimadaMessage"/>
+                </p:inputNumber>
+                <p:message id="vidaEstimadaMessage" for="vidaEstimada" display="icon"/>
+
+                <!-- Valor Residual sempre visível, mas desabilitado se não aplicável -->
+                <p:panelGrid id="valorResidualGroup" columns="3"
+    style="display: #{(bemBean.bemAtual.tipoBem != null and bemBean.bemAtual.tipoBem.aplicavel) ? 'table' : 'none'};">
+    
+    <p:outputLabel for="valorResidual" value="Valor Residual:"/>
+    
+    <p:inputNumber id="valorResidual" value="#{bemBean.bemAtual.valorResidual}"
+                   label="Valor Residual"
+                   decimalSeparator="," thousandSeparator="."
+                   symbol="R$ " symbolPosition="p">
+        <p:ajax event="blur" process="@this" update="growl valorResidualMessage"/>
+    </p:inputNumber>
+    
+    <p:message id="valorResidualMessage" for="valorResidual" display="icon"/>
+</p:panelGrid>
+
+
+                <f:facet name="footer">
+    <p:commandButton value="Salvar" actionListener="#{bemBean.salvar}"
+                     update="growl formAdicionar tabelaBens"
+                     process="@form" styleClass="ui-button-success"
+                     style="margin-right: 10px;"/>
+    <p:commandButton value="Limpar" type="reset" immediate="true"
+                     actionListener="#{bemBean.resetarFormulario}"
+                     update="formAdicionar growl" styleClass="ui-button-secondary"
+                     process="@this"/>
+</f:facet>
+            </p:panelGrid>
+        </h:form>
+
+        <!-- Tabela de bens -->
+        <h:form id="tabelaBens">
+            <p:dataTable value="#{bemBean.bens}" var="bem" paginator="true" rows="10" style="margin-top: 20px;">
+    <f:facet name="header">Bens Cadastrados</f:facet>
+
+    <p:column headerText="ID"><h:outputText value="#{bem.id}"/></p:column>
+    <p:column headerText="Nome"><h:outputText value="#{bem.nome}"/></p:column>
+    <p:column headerText="Tipo"><h:outputText value="#{bem.tipoBem.nome}"/></p:column>
+    <p:column headerText="Data Compra">
+        <h:outputText value="#{bem.dataCompraAsDate}">
+            <f:convertDateTime pattern="dd/MM/yyyy"/>
+        </h:outputText>
+    </p:column>
+    <p:column headerText="Preço Compra">
+        <h:outputText value="#{bem.precoCompra}">
+            <f:convertNumber type="currency" currencySymbol="R$"/>
+        </h:outputText>
+    </p:column>
+    <p:column headerText="Depreciação Anual">
+        <h:outputText value="#{bem.calcularDepreciacaoAnual()}">
+            <f:convertNumber type="currency" currencySymbol="R$"/>
+        </h:outputText>
+    </p:column>
+
+    <!-- Coluna nova para Detalhes -->
+    <p:column headerText="Detalhes">
+        <p:commandButton value="Detalhes" icon="pi pi-info-circle"
+                         action="#{bemBean.verDetalhes(bem)}"
+                         ajax="false" styleClass="ui-button-info"/>
+    </p:column>
+
+    <p:column headerText="Ações">
+        <p:commandButton icon="pi pi-pencil" styleClass="ui-button-info"
+                         actionListener="#{bemBean.prepararEdicao(bem)}"
+                         update="formAdicionar" style="margin-right: 5px;"/>
+        <p:commandButton icon="pi pi-trash" styleClass="ui-button-danger"
+                         actionListener="#{bemBean.remover(bem)}"
+                         update=":tabelaBens growl">
+            <p:confirm header="Confirmação" message="Tem certeza que deseja remover?" icon="pi pi-exclamation-triangle"/>
+        </p:commandButton>
+    </p:column>
+</p:dataTable>
+
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+            </p:confirmDialog>
+        </h:form>
+    </p:panel>
+</h:body>
+</html>

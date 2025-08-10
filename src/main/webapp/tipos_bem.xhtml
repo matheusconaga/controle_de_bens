@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Gerenciar Tipos de Bens</title>
+        <h:outputStylesheet library="primefaces" name="primeflex/primeflex.css"/>
+    </h:head>
+
+    <h:body>
+        <p:panel header="Gerenciar Tipos de Bens" style="margin: 20px;">
+        <p:button value="Voltar para Bens" icon="pi pi-arrow-left"
+                 action="#{bemBean.atualizarTiposDeBem}"
+                 ajax="false"
+                 outcome="bens?faces-redirect=true"
+                 styleClass="ui-button-secondary"
+                 style="margin-bottom: 15px;" />
+
+          
+            <p:growl id="growl" showDetail="true" sticky="false" life="5000" /> <h:form id="formAdicionar">
+                <p:panelGrid columns="3" style="width: 100%;">
+                    <f:facet name="header">
+                        <h:outputText value="Adicionar Novo Tipo de Bem" rendered="#{tipoBemBean.tipoBemAtual.id == null}"/>
+                        <h:outputText value="Editar Tipo de Bem" rendered="#{tipoBemBean.tipoBemAtual.id != null}"/>
+                    </f:facet>
+                    
+                    <p:outputLabel for="nome" value="Nome:"/>
+                    <p:inputText id="nome" value="#{tipoBemBean.tipoBemAtual.nome}" required="true"/>
+                    <p:message for="nome"/>
+
+                    <p:outputLabel for="aplicavel" value="Aplicável para VR:"/>
+                    <p:selectBooleanCheckbox id="aplicavel" value="#{tipoBemBean.tipoBemAtual.aplicavel}"/>
+                    <p:message for="aplicavel"/>
+
+                    <f:facet name="footer">
+                        <p:commandButton value="Salvar" actionListener="#{tipoBemBean.salvar}"
+                                         update="growl formAdicionar tabelaTipos" styleClass="ui-button-success"/> </f:facet>
+                </p:panelGrid>
+            </h:form>
+
+            <h:form id="tabelaTipos">
+                <p:dataTable value="#{tipoBemBean.tiposDeBem}" var="tipo"
+                             paginator="true" rows="10"
+                             style="margin-top: 20px;">
+                    <f:facet name="header">Tipos de Bens Existentes</f:facet>
+
+                    <p:column headerText="ID">
+                        <h:outputText value="#{tipo.id}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Nome">
+                        <h:outputText value="#{tipo.nome}"/>
+                    </p:column>
+
+                    <p:column headerText="Aplicável para VR">
+                        <p:selectBooleanCheckbox value="#{tipo.aplicavel}" disabled="true"/>
+                    </p:column>
+
+                    <p:column headerText="Ações">
+                        <p:commandButton icon="pi pi-pencil" styleClass="ui-button-info"
+                                         actionListener="#{tipoBemBean.prepararEdicao(tipo)}"
+                                         update="formAdicionar" style="margin-right: 5px;"/>
+
+                        <p:commandButton icon="pi pi-trash" styleClass="ui-button-danger"
+                                         actionListener="#{tipoBemBean.remover(tipo)}"
+                                         update="tabelaTipos growl"> <p:confirm header="Confirmação" message="Tem certeza que deseja remover?" icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+                
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                    <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+                </p:confirmDialog>
+            </h:form>
+        </p:panel>
+    </h:body>
+</html>

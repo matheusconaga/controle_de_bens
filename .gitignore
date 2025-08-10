@@ -1,0 +1,29 @@
+# Maven
+/target/
+pom.xml.tag
+pom.xml.versions
+pom.xml.bak
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.log
+.mvn/wrapper/maven-wrapper.jar
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# Servidor (GlassFish)
+/domains/
+/domain1/
+
+# Logs
+*.log
